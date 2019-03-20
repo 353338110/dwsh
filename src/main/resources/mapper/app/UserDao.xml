@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.renren.modules.app.dao.UserDao">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="io.renren.modules.app.entity.UserEntity" id="userMap">
+        <result property="id" column="id"/>
+        <result property="adminId" column="admin_id"/>
+        <result property="realName" column="real_name"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="photo" column="photo"/>
+        <result property="gender" column="gender"/>
+        <result property="school" column="school"/>
+        <result property="grade" column="grade"/>
+        <result property="className" column="class_name"/>
+        <result property="age" column="age"/>
+        <result property="areaId" column="area_id"/>
+        <result property="cityId" column="city_id"/>
+        <result property="provinceId" column="province_id"/>
+        <result property="address" column="address"/>
+        <result property="loginAcount" column="login_acount"/>
+        <result property="mail" column="mail"/>
+        <result property="qq" column="qq"/>
+        <result property="wechat" column="wechat"/>
+        <result property="mobile" column="mobile"/>
+        <result property="lastLogin" column="last_login"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+</mapper>
