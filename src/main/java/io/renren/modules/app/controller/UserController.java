@@ -3,6 +3,7 @@ package io.renren.modules.app.controller;
 import io.renren.common.utils.PageUtils;
 import io.renren.common.utils.R;
 import io.renren.common.validator.ValidatorUtils;
+import io.renren.config.ConfigUtils;
 import io.renren.modules.app.entity.UserEntity;
 import io.renren.modules.app.form.LoginForm;
 import io.renren.modules.app.service.UserService;
@@ -78,9 +79,13 @@ public class UserController {
      * 修改
      */
     @PostMapping("/update")
-    @RequiresPermissions("app:user:update")
+    //@RequiresPermissions("app:user:update")
     @ApiOperation("更新用户")
     public R update(@RequestBody UserEntity user){
+        if (null==user.getId()){
+            return R.error("用户id不能为空");
+        }
+        user.setUpdateTime(new Date());
 		userService.updateById(user);
 
         return R.ok();
@@ -102,10 +107,10 @@ public class UserController {
     @ApiOperation("注册")
     public R register(@RequestBody UserEntity user){
         if (null==user.getUsername() || "".equals(user.getUsername())){
-            return R.error("Username不能为空");
+            return R.error("username不能为空");
         }
         if (null==user.getMobile() || "".equals(user.getMobile())){
-            return R.error("Mobile不能为空");
+            return R.error("mobile不能为空");
         }
 
         UserEntity tempUser = userService.queryByMobile(user.getMobile());
@@ -113,10 +118,12 @@ public class UserController {
             return R.error("手机号已经被注册");
         }
         user.setPassword(DigestUtils.sha256Hex(user.getPassword()));
-        Date date = new Date();
-        user.setLastLogin(date);
-        user.setCreateTime(date);
-        user.setUpdateTime(date);
+        if (ConfigUtils.selfSetDate){
+            Date date = new Date();
+            user.setLastLogin(date);
+            user.setCreateTime(date);
+            user.setUpdateTime(date);
+        }
         user.setLoginAcount(0);
         userService.save(user);
         return R.ok();
@@ -135,8 +142,10 @@ public class UserController {
         //登录次数加一
         user.setLoginAcount(user.getLoginAcount()+1);
         //保存当前登录时间
-        Date date = new Date();
-        user.setLastLogin(date);
+        if (ConfigUtils.selfSetDate){
+            Date date = new Date();
+            user.setLastLogin(date);
+        }
         userService.updateById(user);
         //生成token
         String token = jwtUtils.generateToken(user.getId());

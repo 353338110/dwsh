@@ -25,9 +25,11 @@ import io.renren.modules.oss.service.SysOssService;
 import io.renren.modules.sys.service.SysConfigService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
@@ -97,11 +99,13 @@ public class SysOssController {
 	}
 	
 
+	@Value("${file.path}")
+	private String dirPath;
 	/**
 	 * 上传文件
 	 */
 	@PostMapping("/upload")
-	@RequiresPermissions("sys:oss:all")
+	//@RequiresPermissions("sys:oss:all")
 	public R upload(@RequestParam("file") MultipartFile file) throws Exception {
 		if (file.isEmpty()) {
 			throw new RRException("上传文件不能为空");
@@ -109,7 +113,14 @@ public class SysOssController {
 
 		//上传文件
 		String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
-		String url = OSSFactory.build().uploadSuffix(file.getBytes(), suffix);
+
+		//上传到服务器
+		//String url = OSSFactory.build().uploadSuffix(file.getBytes(), suffix);
+
+		//上传到本地
+		String url = System.currentTimeMillis() + suffix;
+		String filePath = dirPath + File.separator + url;
+		file.transferTo(new File(filePath));
 
 		//保存文件信息
 		SysOssEntity ossEntity = new SysOssEntity();
